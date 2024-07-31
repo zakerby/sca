@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "imp-rag"
+version = "0.1.0"
+description = ""
+authors = ["Nicolas Kerdelhué <nkerdelhue@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10, <3.12.3"
+langchain = "^0.2.11"
+streamlit-chat = "^0.1.1"
+chromadb = "^0.5.5"
+langchain-community = "0.2.6"
+fastembed = "0.3.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
