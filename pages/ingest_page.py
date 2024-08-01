@@ -10,9 +10,8 @@ def display_messages():
 def process_repository():
     if st.session_state["repo_url"] and len(st.session_state["repo_url"].strip()) > 0:
         repo_url = st.session_state["repo_url"].strip()
-        repository_name = ''
         with st.session_state["ingestion_spinner"], st.spinner(f"Ingesting data"):
-            st.session_state["robot"].ingest(repo_url)
+            st.session_state['robot'].ingest(repo_url)
 
         st.session_state["messages"].append((f"Ingested data from {repo_url}", False))
         

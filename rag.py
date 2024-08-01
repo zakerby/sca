@@ -9,6 +9,12 @@ from langchain_community.vectorstores import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.prompts import PromptTemplate
 
+from sklearn.manifold import TSNE
+import plotly.express as px
+import pandas as pd
+
+REPOS_FOLDER_PATH = "repos"
+
 class RAG:
     vector_store = None
     retriever = None
@@ -44,7 +50,9 @@ class RAG:
     
     def ingest(self, repo_url: str):
         print(f"Ingesting data from {repo_url}")
-        files = GitLoader(clone_url=repo_url, repo_path='new_repo').load()
+        # Extract the name of the repository
+        repo_name = repo_url.split("/")[-1].replace(".git", "")
+        files = GitLoader(clone_url=repo_url, repo_path=f"{REPOS_FOLDER_PATH}/{repo_name}").load()
         print(f"Loaded {len(files)} files")
         chunks = self.text_splitter.split_documents(files)
         chunks = filter_complex_metadata(chunks)
@@ -63,7 +71,28 @@ class RAG:
                       | self.prompt
                       | self.model
                       | StrOutputParser())
+    
+    def get_all_embeddings(self):
+        # Assuming vector_store has a method to get all embeddings
+        embeddings = []
+        for doc in self.vector_store.get():
+            embeddings.append(doc.embedding)
+        return embeddings
+
+    
+    def plot_embeddings(self):
+        embeddings = self.get_all_embeddings()
+        # Step 2: Dimensionality reduction using t-SNE
+        tsne = TSNE(n_components=2, random_state=42)
+        reduced_embeddings = tsne.fit_transform(embeddings)
+
+        # Step 3: Create a DataFrame for Plotly
+        df = pd.DataFrame(reduced_embeddings, columns=['Dimension 1', 'Dimension 2'])
+        fig = px.scatter(df, x='Dimension 1', y='Dimension 2', title='t-SNE plot of embeddings')
         
+        return fig
+
+    
     def clear(self):
         self.vector_store = None
         self.retriever = None

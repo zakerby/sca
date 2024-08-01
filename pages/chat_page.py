@@ -12,7 +12,7 @@ def process_input():
         user_text = st.session_state["user_input"].strip()
         with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
             try:
-                agent_text = st.session_state["robot"].ask(user_text)
+                agent_text = st.session_state['robot'].ask(user_text)
             except Exception as e:
                 agent_text = f"An error occurred: {e}"
 
